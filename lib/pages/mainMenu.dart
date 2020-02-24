@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:m_coop/models/members.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -13,6 +14,9 @@ class _MainMenuState extends State < MainMenu > {
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
   TextEditingController _nameController = new TextEditingController();
+
+  int groupValue = -1;
+
   final List < Member > lstMember = [
     Member('Ubaidillah', '312312312', 'Jakarta,31 -02 - 1978', 'Ubaidillah@gmail.com', 'Pria', '08112322234', 'Kampung Karang Kendal', 1),
     Member('Ubaidillah', '312312312', 'Jakarta,31 -02 - 1978', 'Ubaidillah@gmail.com', 'Pria', '08112322234', 'Kampung Karang Kendal', 0),
@@ -28,40 +32,43 @@ class _MainMenuState extends State < MainMenu > {
     Member('Ubaidillah', '312312312', 'Jakarta,31 -02 - 1978', 'Ubaidillah@gmail.com', 'Pria', '08112322234', 'Kampung Karang Kendal', 1),
   ];
 
-  Widget _input(Icon icon, String hint, TextEditingController controller,
-    bool obsecure) {
-    return Container(
-      padding: EdgeInsets.only(left: 20, right: 20),
-      child: TextField(
-        controller: controller,
-        obscureText: obsecure,
-        style: TextStyle(
-          fontSize: 20,
-        ),
+  void handleValueChange(int value) {
+    setState(() {
+      groupValue = value;
+      switch (groupValue) {
+        case 1:
+          //Fluttertoast.showToast(msg: 'Ini Pria',toastLength: Toast.LENGTH_SHORT);
+          break;
+        case 0:
+          //Fluttertoast.showToast(msg: 'Ini Wanita',toastLength: Toast.LENGTH_SHORT);
+          break;
+      }
+    });
+
+  }
+
+  Widget _input(String label, String emptyText, TextInputType type) {
+    return Padding(
+      padding: EdgeInsets.only(top: 10),
+      child: TextFormField(
         decoration: InputDecoration(
-          hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          hintText: hint,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(
-              color: Theme.of(context).primaryColor,
-              width: 2,
-            ),
-          ),
+          labelText: label,
+          fillColor: Colors.white,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(25),
             borderSide: BorderSide(
-              color: Theme.of(context).primaryColor,
-              width: 3,
-            ),
-          ),
-          prefixIcon: Padding(
-            child: IconTheme(
-              data: IconThemeData(color: Theme.of(context).primaryColor),
-              child: icon,
-            ),
-            padding: EdgeInsets.only(left: 30, right: 10),
-          )),
+              width: 1
+            )
+          )
+        ),
+        validator: (val) {
+          if (val.length == 0) {
+            return emptyText;
+          } else {
+            return null;
+          }
+        },
+        keyboardType: type,
       ),
     );
   }
@@ -94,7 +101,6 @@ class _MainMenuState extends State < MainMenu > {
         controller: sc,
         children: < Widget > [
           SizedBox(height: 12.0, ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: < Widget > [
@@ -125,6 +131,55 @@ class _MainMenuState extends State < MainMenu > {
             ],
           ),
           SizedBox(height: 36.0, ),
+          _input('Nama Anggota', 'Nama Anggota tidak boleh kosong', TextInputType.text),
+          _input('Email', 'Email tidak boleh kosong', TextInputType.emailAddress),
+          SizedBox(height: 10, ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: < Widget > [
+              Text('Jenis Kelamin'),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: < Widget > [
+                  Radio(
+                    groupValue: groupValue,
+                    value: 1,
+                    onChanged: handleValueChange,
+                  ),
+                  Text('Pria'),
+                  Radio(
+                    groupValue: groupValue,
+                    value: 0,
+                    onChanged: handleValueChange,
+                  ),
+                  Text('Wanita'),
+                ],
+              ),
+              SizedBox(height: 5, ),
+              _input('Telepon', 'Telepon tidak boleh kosong', TextInputType.phone),
+              SizedBox(height: 20,),
+              Padding(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: TextFormField(
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    labelText: 'Alamat',
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide(
+                        width: 1
+                      )
+                    )
+                  ),
+                  keyboardType: TextInputType.text,
+                ),
+              ),
+              SizedBox(height: 20,)
+            ],
+          )
         ],
       )
     );
@@ -169,8 +224,8 @@ class _MainMenuState extends State < MainMenu > {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       key: keyScaffold,
-      extendBody: true,
       backgroundColor: Theme.of(context).primaryColor,
       body: Stack(
         alignment: Alignment.topCenter,
@@ -198,23 +253,28 @@ class _MainMenuState extends State < MainMenu > {
           Positioned(
             top: 10.0,
             right: 1,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(24.0, 18.0, 24.0, 18.0),
-                child: Container(
-                  padding: const EdgeInsets.all(7.0),
-                    child: Icon(
-                      Icons.exit_to_app,
-                      color: Colors.white,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      shape: BoxShape.circle,
-                      boxShadow: [BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.15),
-                        blurRadius: 8.0,
-                      )]
-                    ),
-                ),
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(24.0, 18.0, 24.0, 18.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(7.0),
+                      child: Icon(
+                        Icons.exit_to_app,
+                        color: Colors.white,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, 0.15),
+                          blurRadius: 8.0,
+                        )]
+                      ),
+                  ),
+              ),
             ),
           ),
         ],
