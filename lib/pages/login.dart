@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:m_coop/pages/mainMenu.dart';
+import 'package:m_coop/pages/mainMenu2.dart';
 import 'package:m_coop/utils/bottomwaveclipper.dart';
 
 class Login extends StatefulWidget {
@@ -150,7 +151,7 @@ class _LoginState extends State < Login > {
       _password = _passwordController.text;
       _emailController.clear();
       _passwordController.clear();
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenu()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenu2()));
     }
 
     void _registerUser() {
